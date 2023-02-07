@@ -1,0 +1,58 @@
+*filter
+### разрешаем установленные, связанные подключения, а так же локальную петлю
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+### цепочка для адресов, которым разрешено все (все порты)
+-N ALL_PORTS
+-A ALL_PORTS -p tcp -j LOG -m limit --limit 2/min --log-prefix "Iptables: ALL_PORTS: " 
+-A ALL_PORTS -p udp -j LOG -m limit --limit 2/min --log-prefix "Iptables: ALL_PORTS: " 
+-A ALL_PORTS -p tcp -j ACCEPT
+-A ALL_PORTS -p udp -j ACCEPT
+-A ALL_PORTS -j DROP
+-A INPUT -s 192.168.64.14 -j ALL_PORTS -m comment --comment "VASYA_ADMIN"
+-A INPUT -s 10.10.231.54 -j ALL_PORTS -m comment --comment "PETYA_ADMIN"
+-A INPUT -s 172.16.0.0/24 -j ALL_PORTS -m comment --comment "VPN_ADMINS"
+
+### цепочка для адресов серверов баз данных и контейнеров с приложением, которым разрешено все
+-N APP_DB
+-A APP_DB -j LOG -m limit --limit 2/min --log-prefix "Iptables: APP_DB: "
+-A APP_DB -j ACCEPT
+-A APP_DB -j DROP
+-A INPUT -s 192.168.64.15 -j APP_DB -m comment --comment "APP_1"
+-A INPUT -s 10.10.6.5 -j APP_DB -m comment --comment "DB_1"
+
+### цепочка, в которую будут заноситься адреса пользователей, которым нужен доступ по требованию. Им также разрешено все
+-N USERS
+-A USERS -j LOG -m limit --limit 2/min --log-prefix "Iptables: USERS: "
+-A USERS -j ACCEPT
+-A USERS -j DROP
+-A INPUT -s 192.168.64.16 -j USERS -m comment --comment "USER_1"
+
+### цепочка, в которую будут заноситься адреса пользователей с временным доступом, им разрешены только определенные порты
+-N LIMIT_PORT_USERS
+-A LIMIT_PORT_USERS -p tcp --match multiport --dports 22,80,443 -j LOG -m limit --limit 2/min --log-prefix "Iptables: LIMIT_PORT_USERS: "
+-A LIMIT_PORT_USERS -p tcp --match multiport --dports 22,80,443 -j ACCEPT
+-A LIMIT_PORT_USERS -j DROP
+-A INPUT -j LIMIT_PORT_USERS -s 192.168.64.17 -m comment --comment "LIMIT_USER_1"
+
+### цепочка, в которую заносятся порты, смотрящие в мир
+-N OUTPUT_PORTS
+-A OUTPUT_PORTS -p tcp --match multiport --dports 22,80,443 -j LOG --log-prefix "Iptables: OUTPUT_PORTS: "
+-A OUTPUT_PORTS -p udp --dports 53 -j LOG --log-prefix "Iptables: OUTPUT_PORTS: "
+-A OUTPUT_PORTS -p tcp --match multiport --dports 22,80,443 -j ACCEPT
+-A OUTPUT_PORTS -p udp --dports 53 -j ACCEPT
+-A OUTPUT_PORTS -j DROP
+-A OUTPUT -j OUTPUT_PORTS
+
+### Цепочка INPUT
+-A INPUT -j LOG -m limit --limit 2/min --log-prefix "Iptables: DROP_ALL: "
+
+## Запрещаем все что не разрешено
+-A INPUT   -j DROP
+-A FORWARD -j DROP
+-A OUTPUT  -j DROP
+
+#Применяем изменения
+COMMIT
