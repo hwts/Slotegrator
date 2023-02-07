@@ -40,9 +40,9 @@
 ### цепочка, в которую заносятся порты, смотрящие в мир
 -N OUTPUT_PORTS
 -A OUTPUT_PORTS -p tcp --match multiport --dports 22,80,443 -j LOG --log-prefix "Iptables: OUTPUT_PORTS: "
--A OUTPUT_PORTS -p udp --dports 53 -j LOG --log-prefix "Iptables: OUTPUT_PORTS: "
+-A OUTPUT_PORTS -p udp --dport 53 -j LOG --log-prefix "Iptables: OUTPUT_PORTS: "
 -A OUTPUT_PORTS -p tcp --match multiport --dports 22,80,443 -j ACCEPT
--A OUTPUT_PORTS -p udp --dports 53 -j ACCEPT
+-A OUTPUT_PORTS -p udp --dport 53 -j ACCEPT
 -A OUTPUT_PORTS -j DROP
 -A OUTPUT -j OUTPUT_PORTS
 
