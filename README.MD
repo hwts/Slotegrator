@@ -2,12 +2,17 @@
 
 Скрипт настройки iptables
 
-### 1. Даем права на исполнение 
+### 1. Скачиваем репозиторий
+```bash
+git clone https://github.com/hwts/Slotegrator.git
+```
+
+### 2. Даем права на исполнение 
 ```bash
 chmod +x ./iptables.sh
 ```
 
-### 2. Применяем правила iptables
+### 3. Применяем правила iptables
 ```bash
 sh ./iptables.sh
 ```
