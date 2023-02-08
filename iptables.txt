@@ -45,7 +45,7 @@
 -A INPUT -s 192.168.64.16 -j USERS -m comment --comment "USER_1"
 -A INPUT -j LIMIT_PORT_USERS -s 192.168.64.17 -m comment --comment "LIMIT_USER_1"
 -A INPUT -j LOG -m limit --limit 2/min --log-prefix "Iptables: DROP_ALL: "
--A INPUT   -j DROP
+-A INPUT -j DROP
 
 ###FORWARD
 -A FORWARD -j DROP
@@ -53,7 +53,7 @@
 ### OUTPUT
 -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A OUTPUT -j OUTPUT_PORTS
--A OUTPUT  -j DROP
+-A OUTPUT -j DROP
 
 #Применяем изменения
 COMMIT
