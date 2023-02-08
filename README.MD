@@ -7,7 +7,7 @@
 chmod +x ./iptables.sh
 ```
 
-### 2.применяем правила iptables
+### 2. Применяем правила iptables
 ```bash
-iptables-restore < iptables.txt
+sh ./iptables.sh
 ```
