@@ -5,25 +5,8 @@
   include_vars: "vars-{{ ansible_distribution }}.yml"
   when: ansible_distribution == "Ubuntu"
 
-- name: "Vars {{ ansible_distribution }}"
-  include_vars: "vars-{{ ansible_distribution }}.yml"
-  when: ansible_distribution == "Debian"
-
-- name: "Vars {{ ansible_distribution }}"
-  include_vars: "vars-{{ ansible_distribution }}.yml"
-  when: ansible_distribution == "CentOS"
-
-
 #include_tasks
 
 - name: "Install {{ ansible_distribution }}"
   include_tasks: "tasks-{{ ansible_distribution }}.yml"
   when: ansible_distribution == "Ubuntu"
-
-- name: "Install {{ ansible_distribution }}"
-  include_tasks: "tasks-{{ ansible_distribution }}.yml"
-  when: ansible_distribution == "Debian"
-
-- name: "Install {{ ansible_distribution }}"
-  include_tasks: "tasks-{{ ansible_distribution }}.yml"
-  when: ansible_distribution == "CentOS"
