@@ -1,0 +1,12 @@
+---
+
+pool_dict:
+  app1:
+    pool_name: "app1"
+    pool_user: "www-data"
+    pool_group: "www-data"
+  app2:
+    pool_name: "app2"
+    pool_user: "www-data"
+    pool_group: "www-data"
+

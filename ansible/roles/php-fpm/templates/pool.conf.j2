@@ -1,0 +1,15 @@
+[{{ item.value.pool_name }}]
+
+user = {{ item.value.pool_user | default('www-data', true) }}
+group = {{ item.value.pool_user| default('www-data', true) }}
+listen = /var/run/php{{ php_version }}-fpm-{{ item.value.pool_name}}.sock
+listen.owner = {{ item.value.listen_owner | default('www-data', true) }}
+listen.group = {{ item.value.listen_group | default('www-data', true) }}
+php_admin_value[disable_functions] = {{ item.value.value.php_admin_value | default('exec,passthru,shell_exec,system', true) }}
+php_admin_flag[allow_url_fopen] = {{ item.value.php_admin_flag | default('off', true) }}
+pm = {{ item.value.pool_pm | default('dynamic', true) }}
+pm.max_children = {{ item.value.pm_max_children | default(75, true) }}
+pm.start_servers = {{ item.value.pm_start_servers | default(10, true) }}
+pm.min_spare_servers = {{ item.value.pm_min_spare_servers | default(5, true) }}
+pm.max_spare_servers = {{ item.value.pm_max_spare_servers | default(20, true) }}
+pm.process_idle_timeout = {{ item.value.pm.process_idle_timeout | default('10s', true) }}

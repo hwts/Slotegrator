@@ -1,0 +1,14 @@
+---
+ssl_enabled: false
+
+reverse_dict:
+  app1:
+    server_name: "app1"
+    phpsocket: "/var/run/php8.1-fpm"
+    listen_port: "80"
+    ssl_cert_path: "/etc/nginx/ssl/app1"
+  app2:
+    server_name: "app2"
+    phpsocket: "/var/run/php8.1-fpm"
+    listen_port: "80"
+    ssl_cert_path: "/etc/nginx/ssl/app2"

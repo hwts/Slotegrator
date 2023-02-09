@@ -1,0 +1,29 @@
+---
+- name: "Apt-get update"
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Install php-fpm"
+  apt:
+    name: "php{{ php_version }}-fpm"
+    state: present
+
+- name: "Remove default pool"
+  file:
+    state: absent
+    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+
+- name: "Configure pools"
+  template:
+    src: pool.conf.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ item.value.pool_name }}.conf"
+  with_dict: "{{ pool_dict }}"
+  notify: reload php-fpm
+
+- name: Create info.php file
+  copy:
+    src: info.php
+    dest: "/var/www/{{ item.value.pool_name }}/index.php"
+  with_dict: "{{ pool_dict }}"
+

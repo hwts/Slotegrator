@@ -1,0 +1,25 @@
+server {
+         server_name {{ item.value.server_name }};
+         listen {{ item.value.listen_port | default('80', true) }};
+         {% if ssl_enabled %}
+         ssl_certificate     {{ item.value.ssl_cert_path }}.pem;
+         ssl_certificate_key {{ item.value.ssl_cert_path }}.key;
+         {% endif %}
+         root /var/www/{{ item.value.server_name }}/;     
+         access_log /var/log/nginx/{{ item.value.server_name }}-access.log;
+         error_log  /var/log/nginx/{{ item.value.server_name }}-error.log error;
+         index index.html index.htm index.php;
+
+         location / {
+                      try_files $uri $uri/ /index.php$is_args$args;
+         }
+
+         location ~ \.php$ {
+                    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                    fastcgi_pass unix:{{ item.value.phpsocket }}-{{ item.value.server_name }}.sock;
+                    fastcgi_index index.php;
+                    include fastcgi.conf;
+         }
+}
+
+

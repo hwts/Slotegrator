@@ -1,0 +1,8 @@
+---
+- name: "Install and configure nginx + php-fpm"
+  hosts: web_servers
+  become: true
+
+  roles:
+    - nginx
+    - php-fpm

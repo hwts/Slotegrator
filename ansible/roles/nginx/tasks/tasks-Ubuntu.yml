@@ -1,0 +1,70 @@
+---
+- name: "Apt-get update"
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Install nginx prerequisites"
+  apt:
+    name: "{{ nginx_packages }}"
+    state: latest
+
+- name: "Add nginx apt signing key"
+  apt_key:
+    url: "https://nginx.org/keys/nginx_signing.key"
+    state: present
+
+- name: "add nginx apt Repo"
+  apt_repository:
+    repo: "deb http://nginx.org/packages/ubuntu {{ ansible_distribution_release }} nginx"
+    state: present
+
+- name: "Set up repository pinning to prefer"
+  ansible.builtin.copy:
+    src: "99nginx"
+    dest: "/etc/apt/preferences.d/99nginx"
+    owner: "root"
+    group: "root"
+    mode: 0660
+
+- name: "Install nginx"
+  apt:
+    name: "nginx={{ nginx_version }}"
+    state: present
+    update_cache: true
+  notify: restart nginx
+
+- name: "Create a dirs"
+  ansible.builtin.file:
+    path: "/var/www/{{ item.value.server_name }}"
+    mode: "0755"
+    owner: "{{ item.value.owner_site_dir | default('www-data', true) }}"
+    group: "{{ item.value.group_site_dir | default('www-data', true) }}"
+    state: directory
+  with_dict: "{{ reverse_dict }}"
+
+- name: "delete default nginx site"
+  file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+  notify: restart nginx
+
+- name: copy nginx conf.d 
+  template:
+    src: site.conf.j2
+    dest: "/etc/nginx/conf.d/{{ item.value.server_name }}.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload nginx
+  with_dict: "{{ reverse_dict }}"
+
+- name: copy nginx.conf 
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/nginx.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
