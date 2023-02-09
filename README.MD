@@ -17,7 +17,7 @@ chmod +x ./iptables.sh
 sh ./iptables.sh
 ```
 
-# Задание 2 iptables
+# Задание 2 ansible
 Тестировалось на ubuntu 22.04
 ```bash
 cd ./ansible
