@@ -16,3 +16,12 @@ chmod +x ./iptables.sh
 ```bash
 sh ./iptables.sh
 ```
+
+# Задание 2 iptables
+Тестировалось на ubuntu 22.04
+```bash
+cd ./ansible
+```
+```bash
+ansible-playbook -i production site.yml
+```
