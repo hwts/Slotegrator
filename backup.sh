@@ -18,9 +18,7 @@ BACKUP_FULL_OLD_DEST="/mnt/backups/FullOld"
 BACKUP_INC_DEST="/mnt/backups/Inc"
 BACKUP_INC_OLD_DEST="/mnt/backups/IncOld"
 
-
 DATE_NOW="$(date +"%Y-%m-%d_%H-%M")"
-
 
 ### Ключи и аргументы
 while getopts ":m:b:d:u:n:s:h" arg; do
@@ -44,7 +42,7 @@ while getopts ":m:b:d:u:n:s:h" arg; do
       SRC_SERVER=$OPTARG
       ;;
     h)
-	    echo "Usage: backup.sh [-m backup_mode] [-b source_backup_dir] [-d dest_backup_dir] [-u user] [-n backup_name] [-s server] [-v debug] [-h help]"
+      echo "Usage: backup.sh [-m backup_mode] [-b source_backup_dir] [-d dest_backup_dir] [-u user] [-n backup_name] [-s server] [-v debug] [-h help]"
       exit 0
       ;;
     \?)
@@ -54,9 +52,34 @@ while getopts ":m:b:d:u:n:s:h" arg; do
     :)
       echo "Опция -$OPTARG требует аргумента." >&2
 
-### Проверка корректности типа бекапа
+### Проверка корректности опций
 if [ "$BACKUP_MODE" != "full" ] && [ "$BACKUP_MODE" != "inc" ]; then
   echo "Error: Некоректное значение, установите тип бекапа full или inc" >&2
+  exit 1
+fi
+
+if [ "$BACKUP_NAME" == "" ]; then
+  echo "Error: Не заданно имя бекапа" >&2
+  exit 1
+ fi
+ 
+if [ "$BACKUP_SRC" == "" ]; then
+  echo "Error: Не задан путь для бекапа" >&2
+  exit 1
+fi
+
+if [ "$SSH_KEY" == "" ]; then
+  echo "Error: Не указан путь до ssh ключа" >&2
+  exit 1
+fi
+
+if [ "$SRC_USER" == "" ]; then
+  echo "Error: Не указан пользователь" >&2
+  exit 1
+fi
+
+if [ "$SRC_SERVER" == "" ]; then
+  echo "Error: Не указан адрес сервера" >&2
   exit 1
 fi
 
