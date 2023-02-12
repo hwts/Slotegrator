@@ -128,7 +128,8 @@ if [ "$BACKUP_MODE" == "full" ]; then
    cd "$BACKUP_OLD_DEST" && tar -czPf ./"$BACKUP_NAME"-"$DATE_NOW".tar.gz  ."$BACKUP_SRC"
   find ./* -maxdepth 0 -type d -exec rm -rf {} \;
   ln -s "$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW".tar.gz "$BACKUP_DEST"
-  find "$BACKUP_DEST/" -maxdepth 0 -type d -mmin +$STORE_TIME -exec rm -rf {} \; 2> /dev/null
+  cd /mnt/backups/Full/ && ls -1tr /mnt/backups/Full/ | head -n -1 | xargs rm -rf
+  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \; 2> /dev/null
 fi
 
 if [ "$BACKUP_MODE" == "inc" ]; then
@@ -141,7 +142,7 @@ if [ "$BACKUP_MODE" == "inc" ]; then
   --link-dest="$BACKUP_DEST" "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
   rm -rf "$BACKUP_DEST"
   ln -s "$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW" "$BACKUP_DEST"
-  find "$BACKUP_OLD_DEST/" -maxdepth 0 -type d -mmin +$STORE_TIME -exec rm -rf {} \; 
+  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type d -mmin +$STORE_TIME -exec rm -rf {} \; 
 fi
 
 if [ $? -eq 0 ]; then
