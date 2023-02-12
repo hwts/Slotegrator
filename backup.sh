@@ -51,6 +51,11 @@ while getopts ":m:b:d:u:n:s:h" arg; do
       ;;
     :)
       echo "Опция -$OPTARG требует аргумента." >&2
+       exit 1
+      ;;
+  esac
+done
+
 
 ### Проверка корректности опций
 if [ "$BACKUP_MODE" != "full" ] && [ "$BACKUP_MODE" != "inc" ]; then
