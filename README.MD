@@ -14,7 +14,7 @@ chmod +x ./iptables.sh
 
 ### 3. Применяем правила iptables
 ```bash
-sh ./iptables.sh
+./iptables.sh
 ```
 
 # Задание 2 ansible
@@ -24,4 +24,18 @@ cd ./ansible
 ```
 ```bash
 ansible-playbook -i production site.yml
+```
+
+# Задание 3 backup
+
+Необходимые переменные:
+
+### 1. Даем права на исполнение 
+```bash
+chmod +x ./backup.sh
+```
+
+### 3. Запускаем бекап
+```bash
+./iptables.sh
 ```
