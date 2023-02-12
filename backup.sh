@@ -4,7 +4,8 @@
 BACKUP_NAME="backup"
 #### full - полный бекап, inc - инкрементный
 BACKUP_MODE="inc"
-DEBUG_MODE="false"
+#DEBUG_MODE="false" Режим debug будет доступен в след версии скрипта
+#ROTATE="" Режим Logrotate будет доступен в след версии скрипта
 SSH_KEY="./id_rsa"
 BACKUP_SRC="/files"
 SRC_USER="user"
@@ -117,7 +118,7 @@ if [ "$BACKUP_MODE" == "full" ]; then
   cd $BACKUP_DEST
   tar -czPf ./$BACKUP_NAME-$DATE_NOW.tar.gz  .$BACKUP_SRC
   find ./* -maxdepth 0 -type d -exec rm -rf {} \;
-
+  exit 0
 fi
 
 if [ "$BACKUP_MODE" == "inc" ]; then
