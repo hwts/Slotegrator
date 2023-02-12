@@ -114,11 +114,9 @@ if [ "$BACKUP_MODE" == "full" ]; then
   BACKUP_OLD_DEST=$BACKUP_FULL_OLD_DEST
 
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
-  $SRC_USER@$SRC_SERVER:$BACKUP_SRC $BACKUP_DEST
-  cd $BACKUP_DEST
-  tar -czPf ./$BACKUP_NAME-$DATE_NOW.tar.gz  .$BACKUP_SRC
+  "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_DEST;
+   cd "$BACKUP_DEST" && tar -czPf ./"$BACKUP_NAME"-"$DATE_NOW".tar.gz  ."$BACKUP_SRC"
   find ./* -maxdepth 0 -type d -exec rm -rf {} \;
-  exit 0
 fi
 
 if [ "$BACKUP_MODE" == "inc" ]; then
@@ -126,9 +124,9 @@ if [ "$BACKUP_MODE" == "inc" ]; then
   BACKUP_DEST=$BACKUP_INC_DEST
   BACKUP_OLD_DEST=$BACKUP_INC_OLD_DEST
 
-  mkdir -p $BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW
+  mkdir -p $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
-  --link-dest="$BACKUP_DEST" $SRC_USER@$SRC_SERVER:$BACKUP_SRC $BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW
+  --link-dest="$BACKUP_DEST" "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
   rm -rf "$BACKUP_DEST"
   ln -s "$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW" "$BACKUP_DEST"
 fi
