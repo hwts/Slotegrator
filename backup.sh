@@ -3,20 +3,20 @@
 # vars
 BACKUP_NAME="backup"
 BACKUP_MODE="inc"
-STORE_TIME="5"
+STORE_TIME="60"
 DEBUG_MODE="0"
-SSH_KEY="./id_rsa"
-BACKUP_SRC="/files"
-SRC_USER="user"
-SRC_SERVER="10.10.33.101"
+SSH_KEY="/Users/user/.ssh/aeroem"
+BACKUP_SRC="/mnt/docker_volumes"
+SRC_USER="backup"
+SRC_SERVER="192.168.8.53"
 
 ### full backup dirs
-BACKUP_FULL_DEST="/mnt/backups/Full"
-BACKUP_FULL_OLD_DEST="/mnt/backups/FullOld"
+BACKUP_FULL_DEST="/Users/hwts/backups/Full"
+BACKUP_FULL_OLD_DEST="/Users/hwts/backups/FullOld"
 
 ### inc backup dirs
-BACKUP_INC_DEST="/mnt/backups/Inc"
-BACKUP_INC_OLD_DEST="/mnt/backups/IncOld"
+BACKUP_INC_DEST="/Users/hwts/backups/Full"
+BACKUP_INC_OLD_DEST="/Users/hwts/backups/FullOld"
 
 DATE_NOW="$(date +"%Y-%m-%d_%H-%M")"
 
@@ -126,9 +126,9 @@ if [ "$BACKUP_MODE" == "full" ]; then
   
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
   "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST/$BACKUP_NAME
-   cd "$BACKUP_OLD_DEST" && tar -czPf ./"$BACKUP_DEST_DATE".tar.gz ./$BACKUP_NAME 
+   cd "$BACKUP_OLD_DEST" && tar -czPf "$BACKUP_DEST_DATE".tar.gz ./$BACKUP_NAME 
   find ./$BACKUP_NAME -maxdepth 0 -type d -exec rm -rf {} \;
-  rm "$BACKUP_DEST/latest"
+  rm -f "$BACKUP_DEST/latest" 
   ln -s "BACKUP_DEST_DATE".tar.gz "$BACKUP_DEST/latest"
   cd $BACKUP_DEST && ls -1tr $BACKUP_DEST | head -n -1 | xargs rm -rf
   find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \; 2> /dev/null
@@ -143,7 +143,7 @@ if [ "$BACKUP_MODE" == "inc" ]; then
   mkdir -p $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
   --link-dest="$BACKUP_DEST" "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" "$BACKUP_DEST_DATE"
-  rm "$BACKUP_DEST/latest"
+  rm -f "$BACKUP_DEST/latest"
   ln -s "$BACKUP_DEST_DATE" "$BACKUP_DEST/latest"
   find "$BACKUP_OLD_DEST/" -maxdepth 1 -type d -mmin +$STORE_TIME -exec rm -rf {} \; 
 fi
