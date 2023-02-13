@@ -136,11 +136,12 @@ if [ "$BACKUP_MODE" == "inc" ]; then
 
   BACKUP_DEST=$BACKUP_INC_DEST
   BACKUP_OLD_DEST=$BACKUP_INC_OLD_DEST
+  BACKUP_DEST_DATE=$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW
 
   mkdir -p $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
-  --link-dest="$BACKUP_DEST" "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
-  ln -s "$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW" "$BACKUP_DEST/latest"
+  --link-dest="$BACKUP_DEST" "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" "$BACKUP_DEST_DATE"
+  ln -s "$BACKUP_DEST_DATE" "$BACKUP_DEST/latest"
   find "$BACKUP_OLD_DEST/" -maxdepth 1 -type d -mmin +$STORE_TIME -exec rm -rf {} \; 
 fi
 
