@@ -124,11 +124,11 @@ if [ "$BACKUP_MODE" == "full" ]; then
   BACKUP_OLD_DEST=$BACKUP_FULL_OLD_DEST
 
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
-  "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST;
-   cd "$BACKUP_OLD_DEST" && tar -czPf ./"$BACKUP_NAME"-"$DATE_NOW".tar.gz  ."$BACKUP_SRC"
-  find ./* -maxdepth 0 -type d -exec rm -rf {} \;
+  "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST/$BACKUP_NAME
+   cd "$BACKUP_OLD_DEST" && tar -czPf ./"$BACKUP_NAME"-"$DATE_NOW".tar.gz ./$BACKUP_NAME 
+  find ./$BACKUP_NAME -maxdepth 0 -type d -exec rm -rf {} \;
   ln -s "$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW".tar.gz "$BACKUP_DEST"
-  cd "$BACKUP_DEST" && ls -1tr "$BACKUP_DEST" | head -n -1 | xargs rm -rf
+  cd $BACKUP_DEST && ls -1tr $BACKUP_DEST | head -n -1 | xargs rm -rf
   find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \; 2> /dev/null
 fi
 
