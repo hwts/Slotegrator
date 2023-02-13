@@ -131,7 +131,7 @@ if [ "$BACKUP_MODE" == "full" ]; then
   rm -f "$BACKUP_DEST/latest" 
   ln -s "BACKUP_DEST_DATE".tar.gz "$BACKUP_DEST/latest"
   cd $BACKUP_DEST && ls -1tr $BACKUP_DEST | head -n -1 | xargs rm -rf
-  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \; 2> /dev/null
+  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \;
 fi
 
 if [ "$BACKUP_MODE" == "inc" ]; then
