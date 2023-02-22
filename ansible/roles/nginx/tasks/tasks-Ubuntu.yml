@@ -7,7 +7,7 @@
 - name: "Install nginx prerequisites"
   apt:
     name: "{{ nginx_packages }}"
-    state: latest
+    state: present
 
 - name: "Add nginx apt signing key"
   apt_key:

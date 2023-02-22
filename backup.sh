@@ -123,33 +123,98 @@ if [ "$BACKUP_MODE" == "full" ]; then
   BACKUP_DEST=$BACKUP_FULL_DEST
   BACKUP_OLD_DEST=$BACKUP_FULL_OLD_DEST
   BACKUP_DEST_DATE=$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW
-  
+
+
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
   "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" $BACKUP_OLD_DEST/$BACKUP_NAME
-   cd "$BACKUP_OLD_DEST" && tar -czPf "$BACKUP_DEST_DATE".tar.gz ./$BACKUP_NAME 
-  find ./$BACKUP_NAME -maxdepth 0 -type d -exec rm -rf {} \;
-  rm -f "$BACKUP_DEST/latest" 
-  ln -s "$BACKUP_DEST_DATE".tar.gz "$BACKUP_DEST/latest"
-  cd $BACKUP_DEST && ls -1tr $BACKUP_DEST | head -n -1 | xargs rm -rf
-  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \;
-fi
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Копирование файлов завершено успешно"
+  else
+    echo "Копирование файлов завершено c ошибками"
+  fi
 
-if [ "$BACKUP_MODE" == "inc" ]; then
+  cd "$BACKUP_OLD_DEST" && tar -czPf "$BACKUP_DEST_DATE".tar.gz ./$BACKUP_NAME 
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Архивация файлов завершена успешно"
+  else
+    echo "Архивация файлов завершена c ошибками"
+  fi
+  
+  find ./$BACKUP_NAME -maxdepth 0 -type d -exec rm -rf {} \;
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Удаление старых файлов завершена успешно"
+  else
+    echo "Удаление старых файлов завершена c ошибками"
+  fi
+
+  rm -f "$BACKUP_DEST/latest"
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+     echo "Удаление ссылки на последний бекап завершена успешно"
+  else
+    echo "Удаление ссылки на последний бекап завершена c ошибками"
+  fi
+
+  ln -s "$BACKUP_DEST_DATE".tar.gz "$BACKUP_DEST/latest"
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Создание ссылки на последний бекап завершена успешно"
+  else
+    echo "Создание ссылки на последний бекап завершена c ошибками"
+  fi
+
+  cd $BACKUP_DEST && ls -1tr $BACKUP_DEST | head -n -1 | xargs rm -rf
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Отбор и удаление заархивированных завершен успешно"
+  else
+    echo "Отбор и удаление заархивированных завершен c ошибками"
+  fi
+
+  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type f -mmin +$STORE_TIME -exec rm -rf {} \;
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Удаление старых бекапов завершено успешно"
+  else
+    echo "Удаление старых бекапов завершено c ошибками"
+  fi
+
+elif [ "$BACKUP_MODE" == "inc" ]; then
 
   BACKUP_DEST=$BACKUP_INC_DEST
   BACKUP_OLD_DEST=$BACKUP_INC_OLD_DEST
   BACKUP_DEST_DATE=$BACKUP_OLD_DEST/$BACKUP_NAME-$DATE_NOW
 
   mkdir -p $BACKUP_OLD_DEST/"$BACKUP_NAME"-"$DATE_NOW"
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Создание директории для нового бекапа завершено успешно"
+  else
+    echo "Создание директории для нового бекапа завершено c ошибками"
+  fi
+
   rsync -az -e "ssh -o StrictHostKeyChecking=no -i $SSH_KEY" \
   --link-dest="$BACKUP_DEST" "$SRC_USER"@"$SRC_SERVER":"$BACKUP_SRC" "$BACKUP_DEST_DATE"
-  rm -f "$BACKUP_DEST/latest"
-  ln -s "$BACKUP_DEST_DATE" "$BACKUP_DEST/latest"
-  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type d -mmin +$STORE_TIME -exec rm -rf {} \; 
-fi
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Копирование файлов завершено успешно"
+  else
+    echo "Копирование файлов завершено c ошибками"
+  fi
 
-if [ $? -eq 0 ]; then
-  echo "Бекап выполнен успешно"
-else
-  echo "Бекап выполнен с ошибками"
+  rm -f "$BACKUP_DEST/latest"
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+     echo "Удаление ссылки на последний бекап завершена успешно"
+  else
+    echo "Удаление ссылки на последний бекап завершена c ошибками"
+  fi
+
+  ln -s "$BACKUP_DEST_DATE" "$BACKUP_DEST/latest"
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+     echo "Создание ссылки на последний бекап завершена успешно"
+  else
+    echo "Создание ссылки на последний бекап завершена c ошибками"
+  fi
+
+  find "$BACKUP_OLD_DEST/" -maxdepth 1 -type d -mmin +$STORE_TIME -exec rm -rf {} \;
+  if [ $? -eq 0] && [ "$DEBUG_MODE" == "1" ]; then
+    echo "Удаление старых бекапов завершено успешно"
+  else
+    echo "Удаление старых бекапов завершено c ошибками"
+  fi
+  
 fi
